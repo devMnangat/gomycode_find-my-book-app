@@ -10,13 +10,14 @@ type UserInfoProps = {
 
 export default function UserInfo({ user }: UserInfoProps) {
   const handleLogout = async () => {
+
     await signOut();
   }
 
   return(
    <div className="rounded-lg border shadow-lg p-10">
       <div>
-        Id : {user._id}
+        Id : {user?._id }
       </div>
       <div>
         Name : {user.name}

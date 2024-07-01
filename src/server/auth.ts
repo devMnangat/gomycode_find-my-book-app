@@ -18,6 +18,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token, user }) { 
+      session.user = user || token
+      // console.log({token, session, user})
       session.user.id = token.userId; //(3)
       return session;
     },
@@ -38,7 +40,7 @@ export const authOptions: NextAuthOptions = {
           password: string
          };
 
-        return userService.authenticate(username, password); //(5) 
+        return userService.authenticate(username, password);
       }
     })
   ],

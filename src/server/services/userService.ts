@@ -1,5 +1,6 @@
 import UserModel from "@/models/UserModel";
 import { dbConnect } from "@/mongoose/dbConnect";
+import { pwdConfirm } from "@/utils/password";
 
 
 export const userService = {
@@ -8,12 +9,11 @@ export const userService = {
 
 async function authenticate(username: string, password: string) {
   await dbConnect();
-  const user = await UserModel.findOne({
-    email: username,
-    password,
-  });
-  if (!user) return null;
-//   console.log({ loggedInUser: user });
+  const users = await UserModel.find({email: username})
+  const user = users.find(usr => pwdConfirm(password, usr.password))
 
-  return user; //(4)
+  if (!user) return null;
+  // console.log({ loggedInUser: user });
+
+  return user;
 }

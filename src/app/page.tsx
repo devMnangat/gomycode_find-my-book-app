@@ -4,10 +4,10 @@ import Link from "next/link";
 
 export default async function HomePage() {
   const authSession = await getServerAuthSession();
-
+  // console.log({authSession})
   return (
     <main className="flex items-center justify-center h-screen">
-      {authSession?.user && <UserInfo user={authSession.user} />}
+      {/* {authSession?.user && <UserInfo user={authSession.user} />} */}
       {!authSession?.user && (
         <Link
           className="font-medium text-3xl mt-2 text-blue-600 hover:underline"

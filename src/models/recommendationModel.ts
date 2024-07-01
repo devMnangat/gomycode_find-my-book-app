@@ -3,16 +3,23 @@ import { Schema, model, models } from "mongoose";
 
 const recommendationSchema = new Schema<IRecommendation>(
   {
-    userId: { type: String, required: true },
-    recommendedBooks: [
-      {
-        title: { type: String, required: true },
-        author: { type: String, required: true },
-      },
-    ],
-    comment: { type: String },
+    user: { 
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true
+    },
+    recommendedBooks: [{
+      type: Schema.Types.ObjectId,
+      ref: "Book"
+    }],
+    comment: { 
+      type: String 
+    },
   },
-  { timestamps: true }
+  { 
+    timestamps: true 
+  }
 );
 
 const RecommendationModel =

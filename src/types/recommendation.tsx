@@ -1,11 +1,13 @@
+import { Book } from "./book";
+import { IUser } from "./user";
 
 export interface IRecommendation {
-    userId: string;
-    recommendedBooks: Array<{
-      title: string;
-      author: string;
-      coverUrl?: string;
-    }>;
+    user: string | IUser ;
+    recommendedBooks: (string | Book)[];
     comment?: string;
+  }
+  
+  export interface Query{
+    params: {id: string};
   }
   

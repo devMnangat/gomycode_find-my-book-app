@@ -1,5 +1,6 @@
-import UserModel from "@/models/userModel";
+import UserModel from "@/models/UserModel";
 import { dbConnect } from "@/mongoose/dbConnect";
+import { pwdHasher } from "@/utils/password";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -19,19 +20,26 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req:NextRequest) {
   try {
-    const body = await req.json();
-    const hashedUsers = Array.isArray(body) ? body : [body];
-    await dbConnect();
-    const savedUsers = await UserModel.insertMany(hashedUsers);
-
-    return NextResponse.json(savedUsers);
+      const body = await req.json()
+      const hashedUsers =( Array.isArray(body)? body : [body]).map(usr => {
+          usr.password = pwdHasher(usr.password)
+          return usr
+      })
+      await dbConnect()
+      const savedUser = await UserModel.insertMany(hashedUsers)
+      
+  return NextResponse.json(
+  savedUser
+  )
   } catch (error: any) {
-    console.log(error.message);
-    return new NextResponse(
-      JSON.stringify({ message: "An error occurred " + error.message }),
-      { status: 500 }
-    );
+      console.log("An error has occurred "+ error.message)
+      return new NextResponse(JSON.stringify({message: error.message}),
+      {status: 500}
+  )
+      
   }
+
+  
 }

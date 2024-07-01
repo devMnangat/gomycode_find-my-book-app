@@ -9,3 +9,4 @@ export async function dbConnect() {
         console.log("An error has occurred "+ error.message)
     }
 }
+
