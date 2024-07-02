@@ -1,4 +1,4 @@
-import UserModel from "@/models/UserModel";
+import UserModel from "../../../models/UserModel";
 import { dbConnect } from "@/mongoose/dbConnect";
 import { pwdHasher } from "@/utils/password";
 import { NextRequest, NextResponse } from "next/server";

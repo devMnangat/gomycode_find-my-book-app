@@ -1,7 +1,6 @@
-import UserModel from "@/models/UserModel";
+import UserModel from "../../../../models/UserModel";
 import { dbConnect } from "@/mongoose/dbConnect";
 import { userService } from "@/server/services/userService";
-import { pwdHasher } from "@/utils/password";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
