@@ -1,5 +1,5 @@
 import { getServerAuthSession } from "@/server/auth";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function HomePage() {
