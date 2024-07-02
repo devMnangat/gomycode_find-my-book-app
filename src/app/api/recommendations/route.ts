@@ -1,7 +1,7 @@
 // import RecommendationModel from "@/models/RecommendationModel";
 // import { dbConnect } from "@/mongoose/dbConnect";
-import { dbConnect } from "../../../mongoose/dbConnect";
-import RecommendationModel from "../../../models/RecommendationModel";
+import { dbConnect } from "@/mongoose/dbConnect";
+import RecommendationModel from "@/models/RecommendationModel";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

@@ -1,4 +1,4 @@
-import RecommendationModel from "../../../../models/RecommendationModel";
+import RecommendationModel from "@/models/RecommendationModel";
 import { dbConnect } from "@/mongoose/dbConnect";
 import { Query } from "@/types/recommendation";
 import { NextRequest, NextResponse } from "next/server";
