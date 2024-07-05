@@ -2,15 +2,17 @@ import BookModel from "@/models/BookModel";
 import { dbConnect } from "@/mongoose/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     await dbConnect();
-    const fetchedBooks = await BookModel.find({});
-    if (!fetchedBooks)
-      return new NextResponse(JSON.stringify({ message: "no Books found" }), {
-        status: 400,
-      });
-      
+    const apiResponse = await fetch('https://api.bigbookapi.com/search-books?api-key=912b5103e2a942e1988e0e95bae54d71');
+    if (!apiResponse.ok) {
+      throw new Error('Failed to fetch data from external API');
+    }
+    const fetchedBooks = await apiResponse.json();
+    console.log({fetchedBooks})
+
+
 
     return NextResponse.json(fetchedBooks);
   } catch (error: any) {
