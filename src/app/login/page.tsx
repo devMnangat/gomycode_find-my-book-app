@@ -1,39 +1,47 @@
 "use client";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 type LoginInput = {
   username: string;
   password: string;
-}
+};
 
 type PageProps = {
-  searchParams: { error?: string }
-}
+  searchParams: { error?: string };
+};
 
-export default function LoginPage({searchParams}: PageProps) {
-  const [inputs, setInputs] = useState<LoginInput>({ username: "", password: "" });
+export default function LoginPage({ searchParams }: PageProps) {
+  const [inputs, setInputs] = useState<LoginInput>({
+    username: "",
+    password: "",
+  });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
-    setInputs(values => ({...values, [name]: value}))
-  }
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
 
-  const handleSubmit = async (event:FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    await signIn("credentials", { 
-      username: inputs.username, 
-      password: inputs.password, 
-      callbackUrl: '/dashboard' });
-  }
+    await signIn("credentials", {
+      username: inputs.username,
+      password: inputs.password,
+      callbackUrl: "/dashboard",
+    });
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
                 Username
               </label>
               <div className="mt-2">
@@ -52,7 +60,10 @@ export default function LoginPage({searchParams}: PageProps) {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Password
                 </label>
               </div>
@@ -78,15 +89,19 @@ export default function LoginPage({searchParams}: PageProps) {
                 Sign in
               </button>
             </div>
-            { searchParams.error && (
+            <div>
+              <p>
+                Already have an account? <Link className="underline text-blue-600 font-semibold" href={"/register"}>Register</Link>
+              </p>
+            </div>
+            {searchParams.error && (
               <p className="text-red-600 text-center capitalize">
                 Login failed.
               </p>
             )}
           </form>
-
         </div>
       </div>
     </>
-  )
+  );
 }
