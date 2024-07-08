@@ -5,16 +5,19 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   try {
     await dbConnect();
-    const apiResponse = await fetch('https://api.bigbookapi.com/search-books?api-key=912b5103e2a942e1988e0e95bae54d71');
+    const apiResponse = await fetch(`https://www.googleapis.com/books/v1/volumes?q=flowers&key=${process.env.NEXT_PUBLIC_GOOGLEBOOKS_API_KEY}`);
     if (!apiResponse.ok) {
       throw new Error('Failed to fetch data from external API');
     }
     const fetchedBooks = await apiResponse.json();
-    console.log({fetchedBooks})
+    const bookItems = fetchedBooks.items;
+    const books = bookItems.volumeInfo
+
+    console.log({books})
 
 
 
-    return NextResponse.json(fetchedBooks);
+    return NextResponse.json(bookItems);
   } catch (error: any) {
     return new NextResponse(JSON.stringify({ message: "An error occurred "+ error.message }), {
       status: 500,
@@ -31,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(savedBooks);
   } catch (error: any) {
-    console.log(error.message);
+    // console.log(error.message);
     return new NextResponse(
       JSON.stringify({ message: "An error occurred " + error.message }),
       { status: 500 }

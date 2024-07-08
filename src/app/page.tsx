@@ -7,7 +7,7 @@ export default async function HomePage() {
   console.log({authSession})
   // if(!authSession?.user) redirect("/login")
   return (
-    <main className="flex items-center justify-center h-screen">
+    <main className="flex items-center justify-center h-screen bg-[url('../../public/Images/book-bg.jpeg')] bg-cover bg-center">
             {!authSession?.user && (
         <Link
           className="font-medium text-3xl mt-2 text-blue-600 hover:underline"
