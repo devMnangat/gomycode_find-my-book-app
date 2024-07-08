@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default async function BooksPage() {
   const response = await fetch(
-    `https://www.googleapis.com/books/v1/volumes?q=flowers&filter=free-ebooks&download=epub&key=${process.env.NEXT_PUBLIC_GOOGLEBOOKS_API_KEY}`
+    `https://www.googleapis.com/books/v1/volumes?q=Daniel&filter=free-ebooks&download=epub&key=${process.env.NEXT_PUBLIC_GOOGLEBOOKS_API_KEY}`
   );
 
   const booksData = await response.json();
