@@ -1,5 +1,7 @@
 import BookModel from "@/models/BookModel";
+import RecommendationModel from "@/models/RecommendationModel";
 import { dbConnect } from "@/mongoose/dbConnect";
+import { IRecommendation } from "@/types/recommendation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -11,15 +13,14 @@ export async function GET() {
     }
     const fetchedBooks = await apiResponse.json();
     const bookItems = fetchedBooks.items;
-    const books = bookItems.volumeInfo
 
-    console.log({books})
+    const books = bookItems.map((item: any) => item.volumeInfo);
 
-
+    console.log({ books });
 
     return NextResponse.json(bookItems);
   } catch (error: any) {
-    return new NextResponse(JSON.stringify({ message: "An error occurred "+ error.message }), {
+    return new NextResponse(JSON.stringify({ message: "An error occurred: " + error.message }), {
       status: 500,
     });
   }
@@ -27,17 +28,42 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const hashedBooks = Array.isArray(body) ? body : [body];
-    await dbConnect();
-    const savedBooks = await BookModel.insertMany(hashedBooks);
+    const { user, book } = await req.json();
 
-    return NextResponse.json(savedBooks);
+    await dbConnect();
+    const newBook = new BookModel(book);
+    let fetchedBook = await BookModel.findOne({ title: newBook.title });
+    if (!fetchedBook) {
+      fetchedBook = await newBook.save();
+    }
+    if (!fetchedBook) throw new Error("Could not fetch or save the book");
+
+    // create book recommendations
+    await handleCreateBookRecommendation(user.id, fetchedBook._id);
+    return NextResponse.json({ success: true, fetchedBook });
   } catch (error: any) {
-    // console.log(error.message);
+    console.log(error.message);
     return new NextResponse(
-      JSON.stringify({ message: "An error occurred " + error.message }),
+      JSON.stringify({ message: "An error occurred: " + error.message }),
       { status: 500 }
     );
   }
 }
+
+async function handleCreateBookRecommendation(userId: string, bookId: string) {
+  const recom: IRecommendation | any = await RecommendationModel.findOne({ user: userId });
+  if (!recom) {
+    await RecommendationModel.insertMany([{ user: userId, recommendedBooks: [bookId] }]);
+    return;
+  }
+
+  let books = recom.recommendedBooks || [],
+  uniqueBooks = Array.from(new Set(books))
+  if (!books.includes(bookId)) {
+    books.push(bookId);
+  }
+
+//  return await RecommendationModel.findByIdAndUpdate(recom._id, { recommendedBooks: books });
+ return await RecommendationModel.updateOne({_id: recom._id, recommendedBooks: {$nin: uniqueBooks}}, { recommendedBooks: books });
+}
+

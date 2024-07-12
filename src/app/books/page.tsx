@@ -1,10 +1,11 @@
+import { AddToLibrary } from "@/components/AddToLibrary";
 import DownloadLink from "@/components/DownloadPdf";
 import { Book } from "@/types/book";
 import Image from "next/image";
 
 export default async function BooksPage() {
   const response = await fetch(
-    `https://www.googleapis.com/books/v1/volumes?q=Daniel&filter=free-ebooks&download=epub&key=${process.env.NEXT_PUBLIC_GOOGLEBOOKS_API_KEY}`
+    `https://www.googleapis.com/books/v1/volumes?q=holmes&filter=free-ebooks&download=epub&key=${process.env.NEXT_PUBLIC_GOOGLEBOOKS_API_KEY}`
   );
 
   const booksData = await response.json();
@@ -41,7 +42,7 @@ export default async function BooksPage() {
               <p className="text-sm "> By {book.volumeInfo.authors}</p>
             </div>
             <div className="mx-auto flex justify-between items-end">
-              <DownloadLink book={book} />
+              <AddToLibrary book={book} />
               <div className="text-md">{book.infolink}</div>
             </div>
           </div>

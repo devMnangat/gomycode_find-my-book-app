@@ -15,7 +15,7 @@ const Navbar = () => {
           <Link href={"/dashboard"}>Dashboard</Link>
         </li>
         <li className=" hover:text-theme-natural">
-          <Link href={"/about"}>About</Link>
+          <Link href={"/books"}>About</Link>
         </li>
         <li >
           <Link className="hover:underline" href={"/login"}>Login</Link>/ <Link className="hover:underline" href={"/register"}>Register</Link>

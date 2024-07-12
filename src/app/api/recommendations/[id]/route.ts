@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest, query: Query) {
   try {
     await dbConnect();
-    const fetchedRecommendation = await RecommendationModel.findById(query.params.id).populate("user");
+    const fetchedRecommendation = await RecommendationModel.findById(query.params.id);
     if (!fetchedRecommendation)
       return new NextResponse(JSON.stringify({ message: "no recommendation found" }), {
         status: 400,
@@ -32,7 +32,7 @@ export async function PUT(req: NextRequest, query: Query) {
   
       return NextResponse.json(updatedRecommendation);
     } catch (error: any) {
-      return new NextResponse(JSON.stringify({ message: "An error occurred" }), {
+      return new NextResponse(JSON.stringify({ message: "An error occurred "+ error.message }), {
         status: 500,
       });
     }

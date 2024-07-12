@@ -1,5 +1,6 @@
 "use client"
 
+import { AddToLibrary } from '@/components/AddToLibrary';
 import DownloadLink from '@/components/DownloadPdf';
 import Image from 'next/image';
 import { useRef, useState, FormEvent } from 'react';
@@ -48,28 +49,31 @@ export default function Search() {
     // <div className="bg-gray-100 p-8 text-center">
       <div className="min-w-md mx-auto flex flex-col items-center bg-theme-natural">
       <div className="max-w-md mx-auto flex flex-col items-center">
-        <h1 className="text-4xl font-bold mb-5">Discover Your Next Read</h1>
-        <form onSubmit={handleFetchBook} className="w-full">
-          <label htmlFor="query" className="sr-only"><FaSearch /></label>
-          <input
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-            id="query"
-            name="query"
-            ref={queryRef}
-            placeholder="Enter a Book or Author name ..."
-            type="text"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Search
-          </button>
-        </form>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Discover Your Next Read</h1>
+        <div className="bg-white flex items-center justify-center p-2 rounded-xl border border-gray-600">
+  <form onSubmit={handleFetchBook} className="w-full flex gap-2">
+    <label htmlFor="query" className="sr-only">Search</label>
+    <input
+      className="w-full p-2 border-none focus:outline-none sm:text-lg md:text-lg lg:text-xl"
+      required
+      id="query"
+      name="query"
+      ref={queryRef}
+      placeholder="Enter a Book or Author name ..."
+      type="text"
+    />
+    <button
+      type="submit"
+      className="text-blue-500 p-3 h-fit rounded-lg hover:text-blue-600"
+    >
+      <FaSearch />
+    </button>
+  </form>
+</div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">Error fetching books. Please try again.</p>}
+
+        {loading && <p className='sm:text-lg md:text-xl lg:text-2xl xl:text-3xl'>Loading...</p>}
+        {error && <p className="text-red-500 sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">Error fetching books. Please try again.</p>}
         </div>
 
         {/* Search results */}
@@ -99,13 +103,19 @@ export default function Search() {
                   ></Image>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">{book.volumeInfo.title}</h2>
-                  <p className="text-sm "> By {book.volumeInfo.authors}</p>
+                  <h2 className="text-xl sm:text-xl md:text-2xl font-semibold">{book.volumeInfo.title}</h2>
+                  <p className="sm:text-lg md:text-lg lg:text-xl">{book.volumeInfo.categories}</p>
                 </div>
-                <div className="mx-auto flex justify-between items-end">
+                <div className='flex jusify-between'>
+                <div className="mx-auto flex justify-between items-end sm:text-lg md:text-lg lg:text-xl">
                   <DownloadLink book={book} />
-                  <div className="text-md">{book.infolink}</div>
+                  <div className="text-md sm:text-lg md:text-lg lg:text-xl">{book.infolink}</div>
                 </div>
+                <div className="mx-auto flex justify-between items-end sm:text-lg md:text-lg lg:text-xl">
+              <AddToLibrary book={book} />
+              <div className="text-md sm:text-lg md:text-lg lg:text-xl">{book.infolink}</div>
+            </div>
+            </div>
               </div>
             ))}
         </div>

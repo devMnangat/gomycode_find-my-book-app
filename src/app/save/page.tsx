@@ -1,18 +1,19 @@
 "use client";
+import Image from 'next/image';
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 
 interface Book {
   id: string;
   title: string;
   authors: string[];
-  description: string;
+  subtitle: string;
   image?: string;
   infoLink: string;
   rating?: number;
 }
 
 interface Recommendation {
-  user: string; // Add user field
+  user: string;
   recommendedBooks: string[]; // Array of Book ids
   comment?: string;
 }
@@ -22,14 +23,14 @@ const Save: React.FC = () => {
   const [newBook, setNewBook] = useState<Omit<Book, 'id'>>({
     title: '',
     authors: [''],
-    description: '',
+    subtitle: '',
     image: '',
     infoLink: '',
     rating: undefined,
   });
 
   // Assume userId is fetched from some auth context or similar
-  const userId = "667d6693222bbfe60d581bfb"; // Replace with actual user ID
+  const userId = "667d6693222bbfe60d581bfb";
 
   useEffect(() => {
     async function getSavedBooks() {
@@ -68,7 +69,7 @@ const Save: React.FC = () => {
     event.preventDefault();
 
     // Validate required fields
-    if (!newBook.title || !newBook.authors[0] || !newBook.description || !newBook.infoLink) {
+    if (!newBook.title || !newBook.authors[0] || !newBook.subtitle || !newBook.infoLink) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -97,7 +98,7 @@ const Save: React.FC = () => {
         alert(`Error: ${json.message}`);
       } else {
         setSavedBooks([...savedBooks, json]);
-        setNewBook({ title: '', authors: [''], description: '', image: '', infoLink: '', rating: undefined });
+        setNewBook({ title: '', authors: [''], subtitle: '', image: '', infoLink: '', rating: undefined });
         alert('Recommendation added successfully!');
       }
     } catch (error) {
@@ -146,10 +147,10 @@ const Save: React.FC = () => {
             required
           />
           <textarea
-            name="description"
-            value={newBook.description}
+            name="subtitle"
+            value={newBook.subtitle}
             onChange={handleChange}
-            placeholder="Description"
+            placeholder="subtitle"
             className="p-2 border border-gray-300 rounded"
             required
           />
@@ -192,9 +193,9 @@ const Save: React.FC = () => {
         {savedBooks &&
           savedBooks.map((book) => (
             <div key={book.id} className="bg-green-100 p-5 rounded shadow-lg">
-              {book.image && (
-                <img src={book.image} alt={book.title} className="w-full h-80 object-cover mb-4" />
-              )}
+              {/* {book.image && (
+                <Image width={50} height={50} src={book.image} alt={book.title} className="w-full h-80 object-cover mb-4" />
+              )} */}
 
               <div className="text-center">
                 {book.title && (
@@ -205,8 +206,8 @@ const Save: React.FC = () => {
                   <p className="italic text-gray-600 mt-2">By: {book.authors[0]}</p>
                 )}
 
-                {book.description && (
-                  <p className="mt-4">{book.description.substr(0, 100)}...</p>
+                {book.subtitle && (
+                  <p className="mt-4">{book.subtitle.substr(0, 100)}...</p>
                 )}
 
                 {book.infoLink && (
