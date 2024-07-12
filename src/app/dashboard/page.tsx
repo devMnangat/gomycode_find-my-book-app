@@ -6,6 +6,7 @@ import { getServerAuthSession } from "@/server/auth";
 import { IUser } from "@/types/user";
 import React from "react";
 import Link from "next/link";
+import BooksPage from "../books/page";
 
 export default async function Dashboard() {
   const session = await getServerAuthSession();
@@ -24,6 +25,10 @@ export default async function Dashboard() {
             Explore books
           </button>
           </Link>
+        </div>
+        <div>
+        {/* <BooksPage /> */}
+
         </div>
       </div>
     </div>

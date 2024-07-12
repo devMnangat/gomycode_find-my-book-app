@@ -2,9 +2,13 @@
 export interface Book {
     title: string;
     authors: string[];
-    description: string;
-    image: string;
-    infolink: string;
+    subtitle: string;
+    imageLinks: {smallThumbnail: string,thumbnail: string};
+    previewLink: string;
+    language: string
+    pageCount: number
+
+
 }
 
 export interface Query {

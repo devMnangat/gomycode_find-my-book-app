@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
-    const fetchedRecommendations = await RecommendationModel.find({});
+    const fetchedRecommendations = await RecommendationModel.find({}).populate("user");
     if (!fetchedRecommendations) {
       return new NextResponse(JSON.stringify({ message: "no recommendations found" }), {
         status: 400,
