@@ -12,6 +12,7 @@ export function Footer() {
       <Link href={"https://www.instagram.com/pappi_chulo._/"}><FaInstagramSquare className='hover:text-red-500' /></Link>
       </div>
       <p> 2024 Emmanuel Mnangat.all Rights Reserved</p>
+      
     </footer>
   )
 }
