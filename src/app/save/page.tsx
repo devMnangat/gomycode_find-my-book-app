@@ -1,9 +1,11 @@
-"use client"
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import { IoMdTrash } from 'react-icons/io';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Ensure this import is included
+"use client";
+import Rating from "@/components/Rating";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { IoMdTrash } from "react-icons/io";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Book {
   _id: string;
@@ -12,7 +14,7 @@ interface Book {
   subtitle?: string;
   authors: string[];
   language: string;
-  previewLink: string;
+  previewLink?: string;
   imageLinks: {
     thumbnail: string;
   };
@@ -22,6 +24,7 @@ const Library = () => {
   const { data: session } = useSession();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [bookRatings, setBookRatings] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     if (session) {
@@ -31,15 +34,15 @@ const Library = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await fetch('/api/books/saved');
+      const res = await fetch("/api/books/saved");
       if (!res.ok) {
-        throw new Error('Failed to fetch books');
+        throw new Error("Failed to fetch books");
       }
       const data = await res.json();
       setBooks(data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching books:', error);
+      console.error("Error fetching books:", error);
       setLoading(false);
     }
   };
@@ -47,24 +50,30 @@ const Library = () => {
   const handleDelete = async (bookId: string) => {
     try {
       const res = await fetch(`/api/books/saved/${bookId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (!res.ok) {
-        throw new Error('Failed to delete book');
+        throw new Error("Failed to delete book");
       }
-      // Remove the deleted book from the state
       setBooks((prevBooks) => prevBooks.filter((book) => book._id !== bookId));
-      // Show success toast
-      toast.success('Book deleted successfully');
+      toast.success("Book deleted successfully");
     } catch (error) {
-      console.error('Error deleting book:', error);
-      // Show error toast
-      toast.error('Failed to delete book');
+      console.error("Error deleting book:", error);
+      toast.error("Failed to delete book");
     }
   };
 
+  const updateBookRating = (bookId: string, rating: number) => {
+    setBookRatings((prevRatings) => ({
+      ...prevRatings,
+      [bookId]: rating,
+    }));
+  };
+
   if (!session) {
-    return <p className="text-center mt-10">Please log in to view your library.</p>;
+    return (
+      <p className="text-center mt-10">Please log in to view your library.</p>
+    );
   }
 
   if (loading) {
@@ -81,23 +90,39 @@ const Library = () => {
           {books.map((book) => (
             <div key={book._id} className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-semibold mb-2">{book.title}</h2>
-              <p className="text-gray-700 mb-2">By {book.authors.join(', ')}</p>
+              <p className="text-gray-700 mb-2">
+                By{" "}
+                {book.authors && Array.isArray(book.authors)
+                  ? book.authors.join(", ")
+                  : "Unknown Author"}
+              </p>
+
               <p className="text-gray-600 mb-2">Pages: {book.pageCount}</p>
               <p className="text-gray-600 mb-2">Language: {book.language}</p>
-              <a
-                href={book.previewLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                Preview
-              </a>
+              <Rating
+                bookId={book._id}
+                initialRating={bookRatings[book._id] || 0}
+                onRatingChange={(rating) =>
+                  updateBookRating(book._id, Number(rating))
+                }
+              />
+              {book.previewLink ? (
+                <Link
+                  href={book.previewLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  Preview
+                </Link>
+              ) : (
+                <span className="text-gray-500">No preview available</span>
+              )}
               <button
                 onClick={() => handleDelete(book._id)}
-                className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex justify-end items-end"
               >
-                <IoMdTrash className="inline-block mr-1" />
-                Delete
+                <IoMdTrash className="inline-block " />
               </button>
             </div>
           ))}
