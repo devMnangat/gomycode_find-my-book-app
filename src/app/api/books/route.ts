@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handleCreateBookRecommendation(userId: string, bookId: string) {
+async function handleCreateBookRecommendation2(userId: string, bookId: string) {
   const recom: IRecommendation | any = await RecommendationModel.findOne({ user: userId });
   if (!recom) {
     await RecommendationModel.insertMany([{ user: userId, recommendedBooks: [bookId] }]);
@@ -66,4 +66,34 @@ async function handleCreateBookRecommendation(userId: string, bookId: string) {
 //  return await RecommendationModel.findByIdAndUpdate(recom._id, { recommendedBooks: books });
  return await RecommendationModel.updateOne({_id: recom._id, recommendedBooks: {$nin: uniqueBooks}}, { recommendedBooks: books });
 }
+
+async function handleCreateBookRecommendation(userId: string, bookId: string) {
+  try {
+    // Find the recommendation document for the user
+    let recom: IRecommendation | null = await RecommendationModel.findOne({ user: userId });
+
+    if (!recom) {
+      // If no recommendation document exists, create a new one
+      await RecommendationModel.create({ user: userId, recommendedBooks: [bookId] });
+      return;
+    }
+
+    // Ensure recommendedBooks array has unique values
+    let books = recom.recommendedBooks || [];
+    let uniqueBooks = Array.from(new Set(books));
+
+    if (!uniqueBooks.includes(bookId)) {
+      // Add the bookId to recommendedBooks if it's not already there
+      uniqueBooks.push(bookId);
+
+      // Update the recommendation document with the new recommendedBooks array
+      await RecommendationModel.updateOne({ _id: recom?._id }, { recommendedBooks: uniqueBooks });
+    }
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error in handleCreateBookRecommendation:", error);
+    throw error; // Optional: rethrow the error or handle as needed
+  }
+}
+
 

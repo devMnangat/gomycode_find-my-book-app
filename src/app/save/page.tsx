@@ -34,12 +34,12 @@ const Library = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await fetch("/api/books/saved");
+      const res = await fetch("/api/books/library?userId=" + session?.user?.id);
       if (!res.ok) {
         throw new Error("Failed to fetch books");
       }
       const data = await res.json();
-      setBooks(data);
+      setBooks(data.recommendedBooks || []);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching books:", error);
@@ -49,7 +49,7 @@ const Library = () => {
 
   const handleDelete = async (bookId: string) => {
     try {
-      const res = await fetch(`/api/books/saved/${bookId}`, {
+      const res = await fetch(`/api/books/library/${bookId}`, {
         method: "DELETE",
       });
       if (!res.ok) {
