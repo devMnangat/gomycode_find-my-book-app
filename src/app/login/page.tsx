@@ -1,7 +1,8 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type LoginInput = {
   username: string;
@@ -12,7 +13,15 @@ type PageProps = {
   searchParams: { error?: string };
 };
 
+
 export default function LoginPage({ searchParams }: PageProps) {
+  const router = useRouter();
+  const session = useSession();
+  
+  // if(session?.status === "authenticated") return router.push("/dashboard");
+  useEffect(() => {
+    if (session?.status === "authenticated") router.replace("/dashboard");
+  })
   const [inputs, setInputs] = useState<LoginInput>({
     username: "",
     password: "",
