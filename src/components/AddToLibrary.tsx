@@ -2,6 +2,7 @@
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { toast } from "react-toastify";
 
 interface Book {
   volumeInfo: {
@@ -49,12 +50,12 @@ export const AddToLibrary: React.FC<Props> = ({ book }) => {
       });
       if (!res.ok) throw Error("Failed to fetch response");
       const dataResponse = await res.json();
-      alert("Book added successfully");
+      toast.success("Book added successfully");
 
       console.log({ dataResponse });
     } catch (error: any) {
       console.log("An error occurred: " + error.message);
-      alert("Error adding book: " + error.message);
+      toast.error("Error adding book: " + error.message);
     } finally {
       setIsLoading(false);
     }
