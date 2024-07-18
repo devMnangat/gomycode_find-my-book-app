@@ -2,13 +2,14 @@
 import { useSession } from "next-auth/react";
 import React from "react";
 import { MdFileDownload } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const DownloadLink = ({ book }: any) => {
   const { data: session } = useSession();
 
   const handleDownload = () => {
     if (!session?.user) {
-      alert("You need to login to download");
+      toast.error("You need to login to download");
       return;
     }
     const url = book?.accessInfo?.epub?.downloadLink || null; // Path to your PDF file
