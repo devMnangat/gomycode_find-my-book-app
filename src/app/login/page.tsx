@@ -18,7 +18,6 @@ export default function LoginPage({ searchParams }: PageProps) {
   const router = useRouter();
   const session = useSession();
 
-  // if(session?.status === "authenticated") return router.push("/dashboard");
   useEffect(() => {
     if (session?.status === "authenticated") router.replace("/dashboard");
   });
