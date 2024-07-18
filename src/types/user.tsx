@@ -1,9 +1,10 @@
 // user interface
 export interface IUser {
     _id?: string;
-    name: string;
-    email: string;
+    name: string ;
+    email: string | null | undefined;
     password?: string;
+    username: string;
     createdAt?: Date;
     updatedAt?: Date;
   }

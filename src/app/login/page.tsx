@@ -7,24 +7,25 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 type LoginInput = {
   username: string;
   password: string;
+  name: string;
 };
 
 type PageProps = {
   searchParams: { error?: string };
 };
 
-
 export default function LoginPage({ searchParams }: PageProps) {
   const router = useRouter();
   const session = useSession();
-  
+
   // if(session?.status === "authenticated") return router.push("/dashboard");
   useEffect(() => {
     if (session?.status === "authenticated") router.replace("/dashboard");
-  })
+  });
   const [inputs, setInputs] = useState<LoginInput>({
     username: "",
     password: "",
+    name: "",
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +37,7 @@ export default function LoginPage({ searchParams }: PageProps) {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     await signIn("credentials", {
-      username: inputs.username,
+      login: inputs.username,
       password: inputs.password,
       callbackUrl: "/dashboard",
     });
@@ -51,18 +52,18 @@ export default function LoginPage({ searchParams }: PageProps) {
                 htmlFor="username"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Username
+                Email or Username
               </label>
               <div className="mt-2">
                 <input
                   id="username"
                   name="username"
                   type="text"
-                  autoComplete="off"
+                  autoComplete="username"
                   required
-                  value={inputs.username || ""}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={inputs.username}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -100,7 +101,13 @@ export default function LoginPage({ searchParams }: PageProps) {
             </div>
             <div>
               <p>
-                Already have an account? <Link className="underline text-blue-600 font-semibold" href={"/register"}>Register</Link>
+                Don't have an account?{" "}
+                <Link
+                  className="underline text-blue-600 font-semibold"
+                  href={"/register"}
+                >
+                  Register
+                </Link>
               </p>
             </div>
             {searchParams.error && (

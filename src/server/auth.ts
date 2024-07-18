@@ -5,6 +5,8 @@ import {
 } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { userService } from "./services/userService";
+import { UserModel } from "@/models/UserModel";
+import { dbConnect } from "@/mongoose/dbConnect";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -31,18 +33,19 @@ export const authOptions: NextAuthOptions = {
     Credentials({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "username" },
+        login: { label: "Email or Username", type: "text", placeholder: "Email or Username" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-         const { username, password } = credentials as {
-          username: string
+        const { login, password } = credentials as {
+          login: string
           password: string
-         };
-
-        return userService.authenticate(username, password);
+        };
+    
+        return userService.authenticate(login, password);
       }
     })
+    
   ],
 };
 
