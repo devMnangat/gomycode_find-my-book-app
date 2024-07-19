@@ -47,7 +47,7 @@ export default function Search() {
 
   return (
     // <div className="bg-gray-100 p-8 text-center">
-      <div className="min-w-md mx-auto flex flex-col items-center bg-theme-natural">
+      <div className="min-w-md h-screen overflow-scroll mx-auto flex flex-col items-center bg-theme-natural">
       <div className="max-w-md mx-auto flex flex-col items-center">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Discover Your Next Read</h1>
         <div className="bg-white flex items-center justify-center p-2 rounded-xl border border-gray-600">
