@@ -100,7 +100,7 @@ export default function LoginPage({ searchParams }: PageProps) {
             </div>
             <div>
               <p>
-                Don't have an account?{" "}
+                Don&apos;t have an account?
                 <Link
                   className="underline text-blue-600 font-semibold"
                   href={"/register"}
