@@ -1,7 +1,8 @@
-import UserModel from "@/models/UserModel";
+import { deleteUserWithCascade, UserModel } from "@/models/UserModel";
 import { dbConnect } from "@/mongoose/dbConnect";
 import { Query } from "@/types/user";
 import { pwdHasher } from "@/utils/password";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, query: Query) {
@@ -28,6 +29,7 @@ export async function PUT(req:NextRequest, query: Query) {
       await dbConnect()
       const updatedUser = await UserModel.findByIdAndUpdate(query.params.id, body)
       if(!updatedUser) throw Error("Update failed for "+ query.params.id)
+        revalidatePath("/dashboard")
   return NextResponse.json(
   updatedUser
   )
@@ -44,8 +46,9 @@ export async function PUT(req:NextRequest, query: Query) {
   export async function DELETE(req: NextRequest, query: Query) {
     try {
       await dbConnect();
-      const deletedUser = await UserModel.findByIdAndDelete(query.params.id);
+      // const deletedUser = await UserModel.findByIdAndDelete(query.params.id);
       
+      const deletedUser = await deleteUserWithCascade(query.params.id);
       return NextResponse.json(deletedUser);
     } catch (error: any) {
         console.log(error.message)

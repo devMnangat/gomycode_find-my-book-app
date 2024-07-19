@@ -5,7 +5,7 @@ import { FaSquareXTwitter } from 'react-icons/fa6'
 
 export function Footer() {
   return (
-    <footer className=' bg-theme-primary text-theme-secondary text-xl p-5 md:p-7'>
+    <footer className=' bg-theme-primary text-theme-secondary text-xl p-5 md:p-7 mt-12'>
       <div className='flex gap-4'>
       <Link href={"https://www.facebook.com/emmanuel.rotich.121398"}><FaFacebook className='hover:text-blue-700' /></Link>
       <Link href={""}><FaSquareXTwitter /></Link>

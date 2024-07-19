@@ -27,25 +27,25 @@ const Library = () => {
   const [bookRatings, setBookRatings] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
+    async function fetchBooks()  {
+      try {
+        const res = await fetch("/api/books/library?userId=" + session?.user?.id);
+        if (!res.ok) {
+          throw new Error("Failed to fetch books");
+        }
+        const data = await res.json();
+        setBooks(data.recommendedBooks || []);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+        setLoading(false);
+      }
+    };
     if (session) {
       fetchBooks();
     }
   }, [session]);
 
-  const fetchBooks = async () => {
-    try {
-      const res = await fetch("/api/books/library?userId=" + session?.user?.id);
-      if (!res.ok) {
-        throw new Error("Failed to fetch books");
-      }
-      const data = await res.json();
-      setBooks(data.recommendedBooks || []);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching books:", error);
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (bookId: string) => {
     try {

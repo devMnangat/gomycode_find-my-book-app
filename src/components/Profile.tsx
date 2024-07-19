@@ -1,28 +1,26 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { IUser } from "@/types/user";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-type SignupInput = {
-  name: string;
-  username: string;
-  email: string;
-  password: string;
+interface SignupInput extends Partial<IUser> {
+  
 };
 
 type PageProps = {
-  searchParams: { error?: string };
+  searchParams?: { error?: string };
+  profileDetails: string;
 };
 
-export default function SignupPage({ searchParams }: PageProps) {
-  const [inputs, setInputs] = useState<SignupInput>({
-    name: "",
-    email: "",
-    password: "",
-    username: "",
-  });
+
+export default function Profile({ searchParams, profileDetails }: PageProps) {
+    let user: IUser = JSON.parse(profileDetails);
+    const [inputs, setInputs] = useState(user);
+    const router = useRouter();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -33,8 +31,8 @@ export default function SignupPage({ searchParams }: PageProps) {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
   
-    const res = await fetch("/api/users", {
-      method: "POST",
+    const res = await fetch(`/api/users/${user?._id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,12 +40,9 @@ export default function SignupPage({ searchParams }: PageProps) {
     });
   
     if (res.ok) {
-      toast.success("Registration successful");
-      await signIn("credentials", {
-        username: inputs.email,
-        password: inputs.password,
-        callbackUrl: "/dashboard",
-      });
+      toast.success("User profile updated successfully");
+      router.refresh();
+    
     } else {
       const errorData = await res.json();
       if (errorData.message === "Username already exists") {
@@ -62,12 +57,12 @@ export default function SignupPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex h-fit flex-1 flex-col justify-center px-6 lg:px-8 my-4">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Registration
+                Update your profile
               </h1>
               <label
                 htmlFor="name"
@@ -85,7 +80,14 @@ export default function SignupPage({ searchParams }: PageProps) {
                   type="text"
                   autoComplete="off"
                   required
-                  value={inputs.name || ""}
+                  readOnly={true}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Cast e.target to HTMLInputElement to access removeAttribute
+                    const target = e.target as HTMLInputElement;
+                    target.removeAttribute("readOnly");
+                  }}
+                  value={inputs.name as string || ""}
                   onChange={handleChange}
                   className="block w-full rounded-md border-0 pl-10 pr-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -109,7 +111,7 @@ export default function SignupPage({ searchParams }: PageProps) {
                   type="text"
                   autoComplete="off"
                   required
-                  value={inputs.username || ""}
+                  value={inputs.username as string || ""}
                   onChange={handleChange}
                   className="block w-full rounded-md border-0 pl-10 pr-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -140,50 +142,18 @@ export default function SignupPage({ searchParams }: PageProps) {
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Password
-              </label>
-              <div className="relative mt-2">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="text-gray-400" />
-                </span>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="off"
-                  required
-                  value={inputs.password || ""}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-0 pl-10 pr-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            
 
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-orange-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Register
+                Update
               </button>
             </div>
 
-            <div className="text-center">
-              <p className="text-sm">
-                Already have an account?{" "}
-                <Link
-                  className="hover:underline text-indigo-600"
-                  href={"/login"}
-                >
-                  Login
-                </Link>
-              </p>
-            </div>
+            
           </form>
         </div>
       </div>
