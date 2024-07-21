@@ -24,15 +24,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ProviderWrapper>
-          <div className="flex flex-col gap-4 w-full h-screen min-h-fit max-w-7xl mx-auto bg-theme-natural">
-        <Header />
-        <main className="h-screen min-h-fit">
-        {children}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+        <div className="flex flex-col w-full min-h-screen ">
+  <Header />
+  <main className="flex-grow">
+    {children}
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+  </main>
+  <Footer />
+</div>
 
-        </main>
-        <Footer />
-        </div>
         </ProviderWrapper>
         </body>
     </html>
