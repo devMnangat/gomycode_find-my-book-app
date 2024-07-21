@@ -12,10 +12,10 @@ const Navbar = async () => {
   return (
     <nav className="w-full h-fit flex flex-col md:flex-row justify-between border-black bg-theme-primary text-theme-secondary text-xl p-4 md:p-6">
       <div className="gap-3 md:flex md:gap-4">
-        <Link href={"/"} className="text-lg md:text-xl">
+        <Link href={"/"} className="text-xl md:text-3xl">
           <FaHome />
         </Link>
-        <Link href={"/save"} className="text-lg md:text-xl">
+        <Link href={"/save"} className="text-xl md:text-3xl">
           <IoLibrarySharp />
         </Link>
       </div>
