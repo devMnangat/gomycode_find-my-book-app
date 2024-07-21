@@ -30,7 +30,7 @@ export default async function Dashboard() {
         <div className="flex justify-center">
           <Profile profileDetails={JSON.stringify(user)} />
           <Link href={"/search"}>
-          <button className="bg-theme-secondary text-theme-natural text-lg py-3 px-5 rounded-full ">
+          <button className="bg-theme-secondary text-theme-natural text-lg py-3 px-5 rounded-full justify-center ">
             Explore books
           </button>
           </Link>

@@ -81,14 +81,15 @@ const Library = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10 overflow-y-scroll h-screen">
-      <h1 className="text-4xl font-bold mb-8 text-center">My Library</h1>
-      {books.length === 0 ? (
-        <p className="text-center">No books saved yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.map((book) => (
-            <div key={book._id} className="bg-white p-6 rounded-lg shadow-md">
+    <div className="container mx-auto px-4 py-10 flex-grow">
+    <h1 className="text-4xl font-bold mb-8 text-center">My Library</h1>
+    {books.length === 0 ? (
+      <p className="text-center">No books saved yet.</p>
+    ) : (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {books.map((book) => (
+          <div key={book._id} className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
+            <div>
               <h2 className="text-2xl font-semibold mb-2">{book.title}</h2>
               <p className="text-gray-700 mb-2">
                 By{" "}
@@ -96,9 +97,10 @@ const Library = () => {
                   ? book.authors.join(", ")
                   : "Unknown Author"}
               </p>
-
               <p className="text-gray-600 mb-2">Pages: {book.pageCount}</p>
               <p className="text-gray-600 mb-2">Language: {book.language}</p>
+            </div>
+            <div>
               <Rating
                 bookId={book._id}
                 initialRating={bookRatings[book._id] || 0}
@@ -111,24 +113,25 @@ const Library = () => {
                   href={book.previewLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 underline"
+                  className="text-blue-500 underline block mt-2"
                 >
                   Preview
                 </Link>
               ) : (
-                <span className="text-gray-500">No preview available</span>
+                <span className="text-gray-500 block mt-2">No preview available</span>
               )}
               <button
                 onClick={() => handleDelete(book._id)}
-                className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex justify-end items-end"
+                className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex items-center justify-center"
               >
-                <IoMdTrash className="inline-block " />
+                <IoMdTrash className="mr-2" /> Delete
               </button>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
   );
 };
 
