@@ -17,6 +17,7 @@ const Navbar = async () => {
         </Link>
         <Link href={"/save"} className="text-xl md:text-3xl">
           <IoLibrarySharp />
+          
         </Link>
       </div>
       <ul className="w-full flex-col md:w-fit md:flex-row flex gap-4  items-end">
