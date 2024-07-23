@@ -6,6 +6,8 @@ export interface Book {
   previewLink: string;
   language: string;
   pageCount: number;
+  likes: number;
+  likedBy: string[];
 }
 
 export interface Query {

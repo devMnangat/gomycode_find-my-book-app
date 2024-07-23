@@ -28,7 +28,23 @@ export const AddToLibrary: React.FC<Props> = ({ book }) => {
   const { data: session } = useSession() as { data: Session };
   const [isLoading, setIsLoading] = useState(false);
 
+ async function checkBookExists() {
+    let isRecommended = false;
+    try {
+      let res = await fetch(`/api/recommendations/exists?userId=${session?.user?.id}&bookTitle=${book.volumeInfo.title}`);
+      if(!res.ok) throw Error("Failed to fetch response");
+      let data = await res.json();
+      isRecommended = data.exists;
+    } catch (error: any) {
+      console.log("An error occurred: " + error.message);
+      toast.error("Error checking if book exists: " + error.message);
+    }
+    finally {
+      return isRecommended;
+    }
+  }
   const handleSave = async () => {
+    if(await checkBookExists()) return toast.error("Book already exists in library");
     setIsLoading(true);
     try {
       const formattedBook = {
