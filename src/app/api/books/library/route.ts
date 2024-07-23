@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
           status: 404,
         });
       }
-  
+      
       return NextResponse.json(fetchedRecommendations);
     } catch (error: any) {
       return new NextResponse(JSON.stringify({ message: "An error occurred " + error.message }), {
@@ -25,4 +25,6 @@ export async function GET(req: NextRequest) {
       });
     }
   }
+  
+
   

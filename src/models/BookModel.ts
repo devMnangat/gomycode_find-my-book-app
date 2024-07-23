@@ -1,5 +1,5 @@
 import { Book } from "@/types/book";
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const bookSchema: Schema<Book> = new Schema({
   title: { type: String, required: true },
@@ -12,6 +12,8 @@ const bookSchema: Schema<Book> = new Schema({
   previewLink: { type: String, required: true },
   language: { type: String, required: true },
   pageCount: { type: Number, required: true },
+  likes: { type: Number, default: 0 },
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const BookModel = models.Book || model("Book", bookSchema);
