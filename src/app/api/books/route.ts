@@ -48,6 +48,12 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+  finally {
+    await dbConnect();
+    // remove duplicate book recommendations
+    await removeDuplicatesInRecommendedBooks();
+
+  }
 }
 
 async function handleCreateBookRecommendation2(userId: string, bookId: string) {
@@ -67,7 +73,7 @@ async function handleCreateBookRecommendation2(userId: string, bookId: string) {
  return await RecommendationModel.updateOne({_id: recom._id, recommendedBooks: {$nin: uniqueBooks}}, { recommendedBooks: books });
 }
 
-async function handleCreateBookRecommendation(userId: string, bookId: string) {
+async function handleCreateBookRecommendation3(userId: string, bookId: string) {
   try {
     // Find the recommendation document for the user
     let recom: IRecommendation | null = await RecommendationModel.findOne({ user: userId });
@@ -95,5 +101,77 @@ async function handleCreateBookRecommendation(userId: string, bookId: string) {
     throw error; // Optional: rethrow the error or handle as needed
   }
 }
+
+
+async function handleCreateBookRecommendation(userId: string, bookId: string) {
+  try {
+    // Find the recommendation document for the user
+    let recom: IRecommendation | null = await RecommendationModel.findOne({ user: userId });
+
+    if (!recom) {
+      // If no recommendation document exists, create a new one
+      await RecommendationModel.create({ user: userId, recommendedBooks: [bookId] });
+      return;
+    }
+
+    // Remove duplicates from recommendedBooks
+    let uniqueBooks = Array.from(new Set(recom.recommendedBooks));
+
+    // Add the bookId to recommendedBooks if it's not already there
+    if (!uniqueBooks.includes(bookId)) {
+      uniqueBooks.push(bookId);
+    }
+
+    // Update the recommendation document with the deduplicated recommendedBooks array
+    await RecommendationModel.updateOne(
+      { _id: recom._id },
+      { $set: { recommendedBooks: uniqueBooks } }
+    );
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error in handleCreateBookRecommendation:", error);
+    throw error; // Optional: rethrow the error or handle as needed
+  }
+}
+
+async function removeDuplicatesInRecommendedBooks() {
+  try {
+    // Find all recommendation documents
+    const recommendations: IRecommendation[] = await RecommendationModel.find({}).populate("recommendedBooks");
+
+    // Create an array to hold bulk operations
+    const bulkOps: any[] = [];
+
+    // Iterate through each recommendation document
+    recommendations.forEach(recom => {
+      // Remove duplicates from recommendedBooks
+      let uniqueBooks = Array.from(new Set(recom.recommendedBooks));
+
+      // If there were duplicates, add an update operation to the bulkOps array
+      if (uniqueBooks.length !== recom.recommendedBooks.length) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: recom._id },
+            update: { $set: { recommendedBooks: uniqueBooks } }
+          }
+        });
+      }
+    });
+
+    // If there are any operations to perform, execute them
+    if (bulkOps.length > 0) {
+      await RecommendationModel.bulkWrite(bulkOps);
+      console.log("Duplicates removed from recommendedBooks.");
+    } else {
+      console.log("No duplicates found in recommendedBooks.");
+    }
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error in removeDuplicatesInRecommendedBooks:", error);
+    throw error; // Optional: rethrow the error or handle as needed
+  }
+}
+
+
 
 
