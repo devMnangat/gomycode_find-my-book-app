@@ -15,9 +15,8 @@ async function authenticate(login: string, password: string) {
   const user = await UserModel.findOne({
     $or: [{ email: login }, { username: login }]
   });
-
-  if (!user || (user.password !== password || !pwdConfirm(password, user.password))) return null;
-
+  if (!user || !pwdConfirm(password, user.password)) return null;
+console.log({user})
   return user;
 }
 
