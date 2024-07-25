@@ -7,6 +7,8 @@ export interface IUser {
     username: string;
     createdAt?: Date;
     updatedAt?: Date;
+    resetToken?: string;
+    resetTokenExpiry?: Date;
   }
 
   // query interface

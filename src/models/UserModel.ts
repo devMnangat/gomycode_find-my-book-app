@@ -8,6 +8,8 @@ const userSchema = new Schema<IUser & Document>({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     username: { type: String, required: true, unique: true },
+    resetToken: { type: String },
+    resetTokenExpiry: { type: Date },
 }, { timestamps: true });
 
 // Define the UserModel

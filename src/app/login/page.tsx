@@ -98,6 +98,7 @@ export default function LoginPage({ searchParams }: PageProps) {
                 Sign in
               </button>
             </div>
+            <Link href="/forgot-password">Forgot Password?</Link>
             <div>
               <p>
                 Don&apos;t have an account?

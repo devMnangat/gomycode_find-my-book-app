@@ -41,8 +41,9 @@ export const authOptions: NextAuthOptions = {
           login: string
           password: string
         };
-    
-        return userService.authenticate(login, password);
+        let user = await userService.authenticate(login, password);
+    // console.log({login, password,flag:user})
+        return user
       }
     })
     
