@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error in forgot password API:", error);
     return new NextResponse(
-      JSON.stringify({ message: "Internal server error" }),
+      JSON.stringify({ message: "Internal server error" + error.message }),
       { status: 500 }
     );
   }
