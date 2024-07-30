@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
       let query = userId ? { user: userId } : {};
       const fetchedRecommendations = await RecommendationModel.findOne(query).populate('recommendedBooks');
       
-      if (!fetchedRecommendations || fetchedRecommendations.length === 0) {
+      if (!fetchedRecommendations) {
         return new NextResponse(JSON.stringify({ message: "No recommendations found" }), {
           status: 404,
         });

@@ -1,4 +1,5 @@
 "use client";
+import BookComment from "@/components/BookComment";
 import Rating from "@/components/Rating";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -19,8 +20,9 @@ interface Book {
   imageLinks: {
     thumbnail: string;
   };
-  likes: number; // Add this field
+  likes: number;
   likedBy: string[];
+  comments: { id: string; text: string }[];
 }
 
 const Library = () => {
@@ -118,7 +120,7 @@ const Library = () => {
       {books.length === 0 ? (
         <p className="text-center">No books saved yet.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
           {books.map((book) => (
             <div
               key={book._id}
@@ -177,6 +179,7 @@ const Library = () => {
                   <IoMdTrash className="mr-2" /> Delete
                 </button>
               </div>
+              <BookComment bookId={book._id} initialComments={book.comments} />
             </div>
           ))}
         </div>

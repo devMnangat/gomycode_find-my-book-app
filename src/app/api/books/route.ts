@@ -135,9 +135,10 @@ async function handleCreateBookRecommendation(userId: string, bookId: string) {
 }
 
 async function removeDuplicatesInRecommendedBooks() {
-  try {
+  try {const recommendations: IRecommendation[] = (await RecommendationModel.find({}).populate("recommendedBooks"))
+    .map(recom => recom.toObject() as IRecommendation);
     // Find all recommendation documents
-    const recommendations: IRecommendation[] = await RecommendationModel.find({}).populate("recommendedBooks");
+    // const recommendations: IRecommendation[] = await RecommendationModel.find({}).populate("recommendedBooks");
 
     // Create an array to hold bulk operations
     const bulkOps: any[] = [];
