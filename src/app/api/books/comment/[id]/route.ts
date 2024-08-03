@@ -1,5 +1,7 @@
 import {
+  deleteAllBookComments,
   deleteBookComment,
+  deleteCommentsWithoutUserId,
   getCommentsForBook,
   updateBookComment,
 } from "@/models/BookModel";
@@ -32,8 +34,8 @@ export async function PUT(req: NextRequest, query: Query) {
   const { text, bookId } = await req.json();
   try {
     await dbConnect();
-    const commentId = req.url.split("/").pop();
-    const { text } = await req.json();
+    // const commentId = req.url.split("/").pop();
+    // const { text } = await req.json();
 
     const updatedBook = updateBookComment(bookId, commentId as string, text);
 
@@ -62,14 +64,84 @@ export async function PUT(req: NextRequest, query: Query) {
   }
 }
 
+// export async function DELETE1(req: NextRequest, query: Query) {
+//   const { id: commentId } = query.params;
+//   const { bookId } = await req.json();
+//   try {
+//     await dbConnect();
+//     // const commentId = req.url.split("/").pop();
+
+//     const updatedBook = deleteBookComment(bookId as string, commentId as string);
+
+//     if (!updatedBook) {
+//       return new NextResponse(
+//         JSON.stringify({ message: "Comment not found" }),
+//         {
+//           status: 404,
+//         }
+//       );
+//     }
+
+//     return new NextResponse(
+//       JSON.stringify({ message: "Comment deleted successfully" }),
+//       {
+//         status: 200,
+//       }
+//     );
+//   } catch (error: any) {
+//     console.error("Error deleting comment:", error);
+//     return new NextResponse(
+//       JSON.stringify({ message: "An error occurred: " + error.message }),
+//       {
+//         status: 500,
+//       }
+//     );
+//   }
+// }
+
+// export async function DELETE2(req: NextRequest, query: Query) {
+//   const { id: commentId } = query.params;
+//   const { bookId } = await req.json();
+//   try {
+//     await dbConnect();
+//     // const commentId = req.url.split("/").pop();
+
+//     const updatedBook = deleteCommentsWithoutUserId(bookId as string);
+
+//     if (!updatedBook) {
+//       return new NextResponse(
+//         JSON.stringify({ message: "Comment not found" }),
+//         {
+//           status: 404,
+//         }
+//       );
+//     }
+
+//     return new NextResponse(
+//       JSON.stringify({ message: "Comment deleted successfully" }),
+//       {
+//         status: 200,
+//       }
+//     );
+//   } catch (error: any) {
+//     console.error("Error deleting comment:", error);
+//     return new NextResponse(
+//       JSON.stringify({ message: "An error occurred: " + error.message }),
+//       {
+//         status: 500,
+//       }
+//     );
+//   }
+// }
+
 export async function DELETE(req: NextRequest, query: Query) {
   const { id: commentId } = query.params;
   const { bookId } = await req.json();
   try {
     await dbConnect();
-    const commentId = req.url.split("/").pop();
+    // const commentId = req.url.split("/").pop();
 
-    const updatedBook = deleteBookComment(bookId as string, commentId as string);
+    const updatedBook = deleteAllBookComments(bookId as string);
 
     if (!updatedBook) {
       return new NextResponse(
@@ -96,5 +168,6 @@ export async function DELETE(req: NextRequest, query: Query) {
     );
   }
 }
+
 
 

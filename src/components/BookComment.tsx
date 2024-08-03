@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaEllipsisV } from 'react-icons/fa';
 
-const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initialComments: Array<{ id: string; text: string }> }) => {
+const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initialComments: Array<{ id: string; userId: string; text: string }> }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(initialComments);
   const [editCommentId, setEditCommentId] = useState<string | null>(null);
@@ -28,11 +28,13 @@ const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initial
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ bookId, comment, userId: session?.user?.id }),
+        body: JSON.stringify({ bookId, comment: {text: comment, userId: session?.user?.id} }),
       });
 
+      
       if (response.ok) {
         const newComment = await response.json();
+        console.log({newComment});
         setComments([...comments, newComment]);
         setComment('');
         toast.success("Comment added successfully");
@@ -45,10 +47,11 @@ const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initial
     }
   };
 
-  const handleDelete = async (commentId: string) => {
+  const handleDelete = async (commentId: string, bookId: string) => {
     try {
       const response = await fetch(`/api/books/comment/${commentId}`, {
         method: 'DELETE',
+        body: JSON.stringify({ bookId }),
       });
 
       if (response.ok) {
@@ -77,7 +80,7 @@ const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initial
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: editCommentText }),
+        body: JSON.stringify({ text: editCommentText, bookId }),
       });
 
       if (response.ok) {
@@ -122,7 +125,7 @@ const BookComment = ({ bookId, initialComments = [] }: { bookId: string; initial
             {showDropdownId === c.id && (
               <div className="absolute top-8 right-4 w-24 bg-white border rounded-md shadow-md z-10">
                 <button
-                  onClick={() => handleDelete(c.id)}
+                  onClick={() => handleDelete(c.id, bookId)}
                   className="block w-full px-4 py-2 text-left text-red-600 hover:bg-red-50"
                 >
                   Delete

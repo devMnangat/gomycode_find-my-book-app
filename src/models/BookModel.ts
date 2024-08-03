@@ -1,8 +1,7 @@
 import { Book } from "@/types/book";
-import mongoose, { Schema, model, models } from "mongoose";
-import { Document } from "mongoose";
+import mongoose, { Schema, model, models, Document } from "mongoose";
 
-
+// Define the Book schema
 const bookSchema: Schema<Book> = new Schema({
   title: { type: String, required: true },
   authors: { type: [String], required: true },
@@ -17,7 +16,8 @@ const bookSchema: Schema<Book> = new Schema({
   likes: { type: Number, default: 0 },
   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   comments: [
-    { _id: { type: mongoose.Schema.Types.ObjectId },
+    {
+      id: String,
       text: String,
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       createdAt: { type: Date, default: Date.now() },
@@ -25,15 +25,13 @@ const bookSchema: Schema<Book> = new Schema({
   ],
 });
 
+// Create the Book model
 const BookModel = models.Book || model("Book", bookSchema);
 
 export default BookModel;
 
-
-
-
 // Function to add a comment to a book
-export const addCommentToBook = async (bookId: string, comment: { text: string; userId: string }): Promise<Document | null> => {
+export const addCommentToBook = async (bookId: string, comment: { id: string; text: string; userId: string }): Promise<Document | null> => {
   try {
     const book = await BookModel.findById(bookId);
     if (!book) {
@@ -64,7 +62,7 @@ export const getCommentsForBook = async (bookId: string): Promise<Document | nul
 // Function to update a comment
 export const updateBookComment = async (bookId: string, commentId: string, text: string): Promise<Document | null> => {
   try {
-    const book = await BookModel.findOne({ _id: bookId, 'comments._id': commentId });
+    const book = await BookModel.findOne({ _id: bookId, 'comments.id': commentId });
     if (!book) {
       throw new Error("Book or comment not found");
     }
@@ -85,7 +83,7 @@ export const updateBookComment = async (bookId: string, commentId: string, text:
 // Function to delete a comment
 export const deleteBookComment = async (bookId: string, commentId: string): Promise<Document | null> => {
   try {
-    const book = await BookModel.findOne({ _id: bookId, 'comments._id': commentId });
+    const book = await BookModel.findOne({ _id: bookId, 'comments.id': commentId });
     if (!book) {
       throw new Error("Book or comment not found");
     }
@@ -98,4 +96,44 @@ export const deleteBookComment = async (bookId: string, commentId: string): Prom
   }
 };
 
+// Function to delete comments without userId
+export const deleteCommentsWithoutUserId = async (bookId: string): Promise<Document | null> => {
+  try {
+    const book = await BookModel.findById(bookId);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+
+    book.comments = book.comments.filter((comment : any) => comment.userId);
+    await book.save();
+    return book;
+  } catch (error: any) {
+    throw new Error(`Error deleting comments: ${error.message}`);
+  }
+};
+
+// Function to delete all comments from a book
+export const deleteAllBookComments = async (bookId: string): Promise<Document | null> => {
+  try {
+    const book = await BookModel.findById(bookId);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+
+    book.comments = [];
+    await book.save();
+    return book;
+  } catch (error: any) {
+    throw new Error(`Error deleting all comments: ${error.message}`);
+  }
+};
+
+// Function to delete all comments from all books
+export const deleteAllCommentsFromAllBooks = async (): Promise<any> => {
+  try {
+    return await BookModel.updateMany({}, { $set: { comments: [] } });
+  } catch (error: any) {
+    throw new Error(`Error deleting all comments from all books: ${error.message}`);
+  }
+};
 
