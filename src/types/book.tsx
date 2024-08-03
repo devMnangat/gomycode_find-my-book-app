@@ -8,7 +8,7 @@ export interface Book {
   pageCount: number;
   likes: number;
   likedBy: string[];
-  comments?: { userId: string; text: string }[];
+  comments?: { userId: string; id: string; text: string }[];
 }
 
 export interface Query {

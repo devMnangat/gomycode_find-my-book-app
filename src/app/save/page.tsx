@@ -179,7 +179,7 @@ const Library = () => {
                   <IoMdTrash className="mr-2" /> Delete
                 </button>
               </div>
-              <BookComment bookId={book._id} initialComments={book.comments} />
+              <BookComment bookId={book._id} initialComments={book.comments.map(comment => ({ ...comment, userId: 'user-id' }))} />
             </div>
           ))}
         </div>
