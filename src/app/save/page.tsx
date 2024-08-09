@@ -3,7 +3,7 @@ import BookComment from "@/components/BookComment";
 import Rating from "@/components/Rating";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiFillDislike, AiFillLike } from "react-icons/ai";
 import { IoMdTrash } from "react-icons/io";
 import { toast } from "react-toastify";
@@ -29,29 +29,33 @@ const Library = () => {
   const { data: session } = useSession();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [bookRatings, setBookRatings] = useState<{ [key: string]: number }>({});
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
+
+  const fetchBooks = useCallback(async () => {
+    if (!session?.user?.id) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/books/library?userId=${session.user.id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch books");
+      }
+      const data = await res.json();
+      setBooks(data.recommendedBooks || []);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      setError("Failed to load books. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [session?.user?.id]);
 
   useEffect(() => {
-    async function fetchBooks() {
-      try {
-        const res = await fetch(
-          "/api/books/library?userId=" + session?.user?.id
-        );
-        if (!res.ok) {
-          throw new Error("Failed to fetch books");
-        }
-        const data = await res.json();
-        setBooks(data.recommendedBooks || []);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-        setLoading(false);
-      }
-    }
-    if (session) {
-      fetchBooks();
-    }
-  }, [session]);
+    fetchBooks();
+  }, [fetchBooks, refetchTrigger]);
 
   const handleDelete = async (bookId: string) => {
     try {
@@ -61,7 +65,7 @@ const Library = () => {
       if (!res.ok) {
         throw new Error("Failed to delete book");
       }
-      setBooks((prevBooks) => prevBooks.filter((book) => book._id !== bookId));
+      setRefetchTrigger(prev => prev + 1);
       toast.success("Book deleted successfully");
     } catch (error) {
       console.error("Error deleting book:", error);
@@ -76,7 +80,7 @@ const Library = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ like: isLike, userId: session?.user?.id }), // Send user ID
+        body: JSON.stringify({ like: isLike, userId: session?.user?.id }),
       });
       if (!res.ok) {
         const errorText = await res.text();
@@ -97,12 +101,29 @@ const Library = () => {
     }
   };
 
-  const updateBookRating = (bookId: string, rating: number) => {
-    setBookRatings((prevRatings) => ({
-      ...prevRatings,
-      [bookId]: rating,
-    }));
+  const updateBookRating = async (bookId: string, rating: number) => {
+    try {
+      const res = await fetch(`/api/books/library/${bookId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rating, userId: session?.user?.id }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update rating");
+      }
+      setBookRatings((prevRatings) => ({
+        ...prevRatings,
+        [bookId]: rating,
+      }));
+      toast.success("Rating updated successfully");
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      toast.error("Failed to update rating");
+    }
   };
+  
 
   if (!session) {
     return (
@@ -112,6 +133,10 @@ const Library = () => {
 
   if (loading) {
     return <p className="text-center mt-10">Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-10 text-red-500">{error}</p>;
   }
 
   return (
