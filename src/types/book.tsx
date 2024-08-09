@@ -9,6 +9,8 @@ export interface Book {
   likes: number;
   likedBy: string[];
   comments?: { userId: string; id: string; text: string }[];
+  rating: number;
+  ratedBy: { userId: string; rating: number }[];
 }
 
 export interface Query {

@@ -23,6 +23,8 @@ const bookSchema: Schema<Book> = new Schema({
       createdAt: { type: Date, default: Date.now() },
     },
   ],
+  rating: { type: Number, default: 0 },
+  ratedBy: [{ userId: String, rating: Number }],
 });
 
 // Create the Book model

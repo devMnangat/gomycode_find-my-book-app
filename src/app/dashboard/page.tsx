@@ -21,25 +21,28 @@ export default async function Dashboard() {
   // console.log({session})
   if (!session?.user) redirect("/login");
   return (
-    <div className="p-3 min-h-fit overflow-y-scroll bg-[url('../../public/Images/bg-img2.jpg')] bg-cover bg-center h-screen">
-      <h1 className="text-xl font-semibold md:text-2xl text-slate-500">
+    <div className="p-4 min-h-screen overflow-y-scroll bg-[url('../../public/Images/bg-img2.jpg')] bg-cover bg-center">
+    <h1 className="text-2xl font-semibold md:text-3xl text-slate-700 mb-4">
       Dashboard
-      </h1>
-      <div className="bg-slate-300">
-        <UserInfo user={user as any as IUser} />
-        <div className="flex justify-center">
-          <Profile profileDetails={JSON.stringify(user)} />
-          <Link href={"/search"}>
-          <button className="bg-theme-secondary text-theme-natural text-lg py-3 px-5 rounded-full justify-center ">
-            Explore books
+    </h1>
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <UserInfo user={user as any as IUser} />
+      <div className="mt-6">
+        <Profile profileDetails={JSON.stringify(user)} />
+      </div>
+      <div className="flex justify-center mt-6">
+        <Link href="/search">
+          <button className="bg-theme-secondary text-theme-natural text-lg py-3 px-6 rounded-full hover:text-slate-700 hover:bg-gray-400 transition duration-300">
+            Explore Books
           </button>
-          </Link>
-        </div>
-        <div>
+        </Link>
+      </div>
+      <div className="mt-8">
         {/* <BooksPage /> */}
-
-        </div>
       </div>
     </div>
+  </div>
+  
+
   );
 }
